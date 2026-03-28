@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Products — NURANIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --black: #0d1f21; --white: #f0edee;
+    --accent: #2c666e; --accent-dark: #1e474d;
+    --gray: #7a8f91; --light-gray: #c4cfd0;
+    --font-display: 'Syne', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--white); font-family: var(--font-body); overflow-x: hidden; }
+
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 2rem; }
+  nav::before { content: ''; position: absolute; inset: 0; background: rgba(13,31,33,0.97); pointer-events: none; }
+  .nav-logo { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; letter-spacing: 0.2em; color: var(--white); text-decoration: none; position: relative; z-index: 1; }
+  .nav-logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; position: relative; }
+  .nav-links a { color: var(--light-gray); text-decoration: none; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.3s; }
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+  .nav-actions { display: flex; gap: 1rem; align-items: center; position: relative; z-index: 1; }
+  .cart-btn { background: var(--accent); color: var(--white) !important; padding: 0.5rem 1rem; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; position: relative; z-index: 1; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--white); transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .mobile-menu { display: none; position: fixed; inset: 0; background: var(--black); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a { color: var(--white); text-decoration: none; font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; transition: color 0.3s; }
+  .mobile-menu a:hover { color: var(--accent); }
+  .mobile-menu .m-cart { background: var(--accent); padding: 0.8rem 2rem; font-size: 1rem; }
+
+  .page-hero { padding: 7rem 2rem 2rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .page-hero-inner { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .page-tag { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+  .page-title { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 4rem); font-weight: 800; line-height: 0.95; letter-spacing: -0.02em; }
+  .product-count { font-size: 0.85rem; color: var(--gray); }
+
+  .filter-bar { display: flex; gap: 0.5rem; padding: 1rem 2rem; overflow-x: auto; border-bottom: 1px solid rgba(255,255,255,0.06); scrollbar-width: none; }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-btn { background: none; border: 0.5px solid rgba(255,255,255,0.15); color: var(--gray); padding: 0.4rem 1rem; font-family: var(--font-body); font-size: 0.75rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+  .filter-btn:hover, .filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(44,102,110,0.15); }
+
+  .shop-layout { display: grid; grid-template-columns: 200px 1fr; gap: 2rem; padding: 2rem; }
+  .filters { position: sticky; top: 5rem; height: fit-content; }
+  .filter-section { margin-bottom: 2rem; }
+  .filter-title { font-family: var(--font-display); font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--white); margin-bottom: 0.8rem; font-weight: 600; }
+  .filter-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .side-btn { background: none; border: 0.5px solid rgba(255,255,255,0.1); color: var(--gray); padding: 0.4rem 0.8rem; font-family: var(--font-body); font-size: 0.75rem; cursor: pointer; text-align: left; transition: all 0.2s; }
+  .side-btn:hover, .side-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(44,102,110,0.1); }
+  .price-range { display: flex; flex-direction: column; gap: 0.6rem; }
+  .price-range input[type=range] { width: 100%; accent-color: var(--accent); }
+  .price-display { font-size: 0.75rem; color: var(--gray); }
+
+  .sort-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; gap: 0.5rem; }
+  .sort-label { font-size: 0.75rem; color: var(--gray); }
+  .sort-select { background: rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.1); color: var(--white); padding: 0.35rem 0.8rem; font-family: var(--font-body); font-size: 0.75rem; }
+  .sort-select option { background: var(--black); }
+
+  .products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; }
+  .product-card { cursor: pointer; }
+  .product-img { aspect-ratio: 3/4; background: #111e20; position: relative; overflow: hidden; margin-bottom: 0.8rem; }
+  .product-img::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #162c2f, #0d1f21); }
+  .product-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .product-img-inner { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 0.6rem; letter-spacing: 0.3em; color: rgba(44,102,110,0.3); text-transform: uppercase; }
+  .product-badge { position: absolute; top: 0.7rem; left: 0.7rem; background: var(--accent); color: var(--white); font-size: 0.55rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; z-index: 1; }
+  .product-overlay { position: absolute; inset: 0; background: rgba(13,31,33,0.85); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; z-index: 2; }
+  .product-card:hover .product-overlay { opacity: 1; }
+  .add-btn { background: var(--accent); color: var(--white); border: none; padding: 0.7rem 1.4rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; }
+  .add-btn:hover { background: var(--white); color: var(--black); }
+  .product-cat { font-size: 0.65rem; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.2rem; }
+  .product-name { font-family: var(--font-display); font-size: 0.88rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .product-code { font-size: 0.65rem; color: var(--gray); margin-bottom: 0.3rem; font-family: monospace; }
+  .product-price { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--accent); }
+  .product-price s { color: var(--gray); font-weight: 400; font-size: 0.75rem; margin-left: 0.3rem; }
+  .mobile-add { display: none; width: 100%; background: var(--accent); color: var(--white); border: none; padding: 0.55rem; font-family: var(--font-display); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; margin-top: 0.5rem; }
+
+  .loading { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 0; gap: 1rem; grid-column: 1/-1; }
+  .loading-spinner { width: 28px; height: 28px; border: 2px solid rgba(44,102,110,0.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading p { font-size: 0.75rem; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; }
+  .no-products { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--gray); font-size: 0.9rem; }
+  .toast { position: fixed; bottom: 1.5rem; right: 1.5rem; left: 1.5rem; background: var(--accent); color: var(--white); padding: 0.8rem 1.2rem; font-family: var(--font-display); font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; z-index: 9999; text-align: center; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  footer { background: #060e0f; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-copy { font-size: 0.72rem; color: var(--gray); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 0.72rem; color: var(--gray); text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.3s; }
+  .footer-links a:hover { color: var(--accent); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.2rem; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .page-hero { padding: 5.5rem 1.2rem 1.5rem; }
+    .filter-bar { padding: 0.8rem 1.2rem; }
+    .shop-layout { grid-template-columns: 1fr; padding: 1.2rem; }
+    .filters { display: none; }
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+    .product-overlay { display: none; }
+    .mobile-add { display: block; }
+    footer { padding: 1.5rem 1.2rem; }
+  }
+  @media (max-width: 360px) {
+    .products-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html" onclick="closeMobileMenu()">Home</a>
+  <a href="products.html" onclick="closeMobileMenu()">Products</a>
+  <a href="products.html?cat=shoes" onclick="closeMobileMenu()">Shoes</a>
+  <a href="contact.html" onclick="closeMobileMenu()">Contact</a>
+  <a href="cart.html" class="m-cart" id="mobile-cart-link">Cart (0)</a>
+</div>
+
+<nav>
+  <a href="index.html" class="nav-logo">NUR<span>A</span>NIQ</a>
+  <ul class="nav-links">
+    <li><a href="index.html#new">New In</a></li>
+    <li><a href="products.html" class="active">Products</a></li>
+    <li><a href="products.html?cat=shoes">Shoes</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <a href="cart.html" class="cart-btn" id="nav-cart">Cart (0)</a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div>
+      <p class="page-tag">NURANIQ Collection</p>
+      <h1 class="page-title">All Products</h1>
+    </div>
+    <p class="product-count" id="product-count">Loading...</p>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="shirts">Shirts</button>
+  <button class="filter-btn" data-filter="bottoms">Bottoms</button>
+  <button class="filter-btn" data-filter="shoes">Shoes</button>
+  <button class="filter-btn" data-filter="tops">Tops</button>
+  <button class="filter-btn" data-filter="jackets">Jackets</button>
+</div>
+
+<div class="shop-layout">
+  <aside class="filters">
+    <div class="filter-section">
+      <p class="filter-title">Category</p>
+      <div class="filter-options">
+        <button class="side-btn active" data-side="all">All</button>
+        <button class="side-btn" data-side="shirts">Shirts</button>
+        <button class="side-btn" data-side="bottoms">Bottoms</button>
+        <button class="side-btn" data-side="shoes">Shoes</button>
+        <button class="side-btn" data-side="tops">Tops</button>
+        <button class="side-btn" data-side="jackets">Jackets</button>
+      </div>
+    </div>
+    <div class="filter-section">
+      <p class="filter-title">Max Price</p>
+      <div class="price-range">
+        <input type="range" min="500" max="10000" value="10000" step="100" id="price-filter">
+        <p class="price-display">Up to ৳ <span id="price-val">10,000</span></p>
+      </div>
+    </div>
+    <div class="filter-section">
+      <p class="filter-title">Availability</p>
+      <div class="filter-options">
+        <button class="side-btn active" data-stock="all">All Items</button>
+        <button class="side-btn" data-stock="instock">In Stock Only</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="products-area">
+    <div class="sort-bar">
+      <p class="sort-label" id="showing-count">Showing all products</p>
+      <select class="sort-select" id="sort-select">
+        <option value="default">Sort: Default</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+      </select>
+    </div>
+    <div class="products-grid" id="products-grid">
+      <div class="loading"><div class="loading-spinner"></div><p>Loading products...</p></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p class="footer-copy">© 2026 NURANIQ. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+
+<script>
+  const SHEET_ID = '1D-uqbXVDstQ8jktyzAu434FyMbFUUgoUgyOuBKWwWvk';
+  const API_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Products`;
+
+  function toggleMenu() {
+    document.getElementById('mobile-menu').classList.toggle('open');
+    document.getElementById('hamburger').classList.toggle('open');
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+
+  let cart = JSON.parse(localStorage.getItem('nuraniq_cart') || '[]');
+  function updateCartNav() {
+    const c = cart.length;
+    document.getElementById('nav-cart').textContent = `Cart (${c})`;
+    const ml = document.getElementById('mobile-cart-link');
+    if (ml) ml.textContent = `Cart (${c})`;
+  }
+  updateCartNav();
+
+  function addToCart(p) {
+    cart.push(p);
+    localStorage.setItem('nuraniq_cart', JSON.stringify(cart));
+    updateCartNav();
+    showToast(`${p.name} added ✓`);
+  }
+
+  function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast'; t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+  }
+
+  const fallback = [
+    { id:'NRQ001', name:'Oversized Linen Shirt', category:'shirts', price:2200, old_price:2800, badge:'New', stock:10 },
+    { id:'NRQ002', name:'Slim Cargo Pants', category:'bottoms', price:3100, old_price:'', badge:'Hot', stock:8 },
+    { id:'NRQ003', name:'Low Top Sneakers', category:'shoes', price:4500, old_price:'', badge:'', stock:5 },
+    { id:'NRQ004', name:'Essential Tee Pack', category:'tops', price:1800, old_price:2400, badge:'Sale', stock:15 },
+  ];
+
+  let allProducts = [], activeCategory = 'all', activeStock = 'all', maxPrice = 10000;
+
+  async function fetchProducts() {
+    try {
+      const res = await fetch(API_URL);
+      const text = await res.text();
+      const json = JSON.parse(text.substr(47).slice(0, -2));
+      const rows = json.table.rows;
+      const products = rows.map(row => ({
+        id: row.c[0]?.v || '',
+        name: row.c[1]?.v || '',
+        category: (row.c[2]?.v || '').toLowerCase().trim(),
+        price: parseFloat(row.c[3]?.v) || 0,
+        old_price: parseFloat(row.c[4]?.v) || '',
+        image: row.c[5]?.v || '',
+        badge: row.c[6]?.v || '',
+        stock: parseInt(row.c[7]?.v) || 0,
+      })).filter(p => p.name);
+      allProducts = products.length > 0 ? products : fallback;
+    } catch(e) { allProducts = fallback; }
+    renderProducts();
+  }
+
+  function renderProducts() {
+    const grid = document.getElementById('products-grid');
+    let f = [...allProducts];
+    if (activeCategory !== 'all') f = f.filter(p => p.category === activeCategory);
+    if (activeStock === 'instock') f = f.filter(p => p.stock > 0);
+    f = f.filter(p => p.price <= maxPrice);
+    const sort = document.getElementById('sort-select').value;
+    if (sort === 'price-low') f.sort((a,b) => a.price - b.price);
+    if (sort === 'price-high') f.sort((a,b) => b.price - a.price);
+    document.getElementById('product-count').textContent = `${f.length} Products`;
+    document.getElementById('showing-count').textContent = `Showing ${f.length} products`;
+    if (!f.length) { grid.innerHTML = `<p class="no-products">No products found.</p>`; return; }
+    grid.innerHTML = f.map(p => `
+      <div class="product-card">
+        <div class="product-img">
+          ${p.image ? `<img src="${p.image}" alt="${p.name}" loading="lazy">` : '<div class="product-img-inner">NURANIQ</div>'}
+          ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+          <div class="product-overlay"><button class="add-btn" onclick='addToCart(${JSON.stringify({id:p.id,name:p.name,price:p.price,category:p.category})})'>Add to Cart</button></div>
+        </div>
+        <p class="product-cat">${p.category}</p>
+        <p class="product-name">${p.name}</p>
+        <p class="product-code">#${p.id}</p>
+        <p class="product-price">৳ ${p.price.toLocaleString()} ${p.old_price ? `<s>৳ ${Number(p.old_price).toLocaleString()}</s>` : ''}</p>
+        <button class="mobile-add" onclick='addToCart(${JSON.stringify({id:p.id,name:p.name,price:p.price,category:p.category})})'>Add to Cart</button>
+      </div>`).join('');
+  }
+
+  document.querySelectorAll('[data-filter]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.dataset.filter;
+      renderProducts();
+    });
+  });
+  document.querySelectorAll('[data-side]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-side]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeCategory = btn.dataset.side;
+      renderProducts();
+    });
+  });
+  document.querySelectorAll('[data-stock]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-stock]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeStock = btn.dataset.stock;
+      renderProducts();
+    });
+  });
+  document.getElementById('price-filter').addEventListener('input', e => {
+    maxPrice = parseInt(e.target.value);
+    document.getElementById('price-val').textContent = maxPrice.toLocaleString();
+    renderProducts();
+  });
+  document.getElementById('sort-select').addEventListener('change', renderProducts);
+  const cat = new URLSearchParams(window.location.search).get('cat');
+  if (cat) { activeCategory = cat; document.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('active', b.dataset.filter === cat)); }
+  fetchProducts();
+</script>
+</body>
+</html>
