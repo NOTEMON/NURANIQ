@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — NURANIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --black: #0d0d0d; --white: #f8f8f6; --gray: #888; --light: #f0f0ee; --border: #e0e0de; --accent: #e8533a; --font-display: 'Barlow Condensed', sans-serif; --font-body: 'DM Sans', sans-serif; }
+html { scroll-behavior: smooth; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 9999; width: 100%; animation: loadBar 0.5s ease forwards; }
+@keyframes loadBar { from { width: 0%; } to { width: 100%; } }
+body { background: var(--white); color: var(--black); font-family: var(--font-body); overflow-x: hidden; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 3rem; height: 64px; background: var(--white); border-bottom: 1px solid var(--border); }
+.nav-logo img { height: 32px; object-fit: contain; }
+.nav-logo-text { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.1em; color: var(--black); text-decoration: none; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--black); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover, .nav-links a.active { color: var(--accent); }
+.nav-right { display: flex; gap: 1rem; align-items: center; }
+.cart-btn { background: var(--black); color: var(--white); padding: 0.5rem 1.2rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+.cart-btn:hover { background: var(--accent); }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--black); transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-menu { display: none; position: fixed; inset: 0; background: var(--white); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { color: var(--black); text-decoration: none; font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; text-transform: uppercase; }
+.mobile-menu .m-cart { background: var(--black); color: var(--white) !important; padding: 0.8rem 3rem; }
+.page-hero { margin-top: 64px; padding: 3rem; background: var(--black); color: var(--white); }
+.page-tag { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+.page-title { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+.contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.contact-info { padding: 4rem 3rem; border-right: 1px solid var(--border); }
+.info-desc { font-size: 0.9rem; color: var(--gray); line-height: 1.8; margin-bottom: 3rem; max-width: 380px; }
+.contact-cards { display: flex; flex-direction: column; gap: 1px; margin-bottom: 2.5rem; background: var(--border); border: 1px solid var(--border); }
+.contact-card { display: flex; gap: 1.2rem; align-items: flex-start; padding: 1.2rem; background: var(--white); transition: background 0.2s; }
+.contact-card:hover { background: var(--light); }
+.contact-card-icon { width: 40px; height: 40px; background: var(--black); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+.contact-card-label { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-bottom: 0.2rem; font-weight: 500; }
+.contact-card-value { font-family: var(--font-display); font-size: 1rem; font-weight: 700; text-transform: uppercase; }
+.contact-card-sub { font-size: 0.75rem; color: var(--gray); margin-top: 0.2rem; }
+.social-links { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.social-link { padding: 0.5rem 1.2rem; border: 1px solid var(--border); color: var(--black); text-decoration: none; font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; transition: all 0.2s; }
+.social-link:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+.contact-form-wrap { padding: 4rem 3rem; }
+.form-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 2rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-group { margin-bottom: 1rem; }
+.form-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-bottom: 0.4rem; display: block; font-weight: 500; }
+.form-input { width: 100%; background: var(--white); border: 1px solid var(--border); color: var(--black); padding: 0.75rem 1rem; font-family: var(--font-body); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+.form-input:focus { border-color: var(--black); }
+.form-input::placeholder { color: #ccc; }
+textarea.form-input { resize: vertical; min-height: 120px; }
+.submit-btn { background: var(--black); color: var(--white); border: none; padding: 1rem 2.5rem; font-family: var(--font-display); font-size: 1rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
+.submit-btn:hover { background: var(--accent); }
+.form-success { display: none; background: var(--black); color: var(--white); padding: 2rem; text-align: center; }
+.form-success h3 { font-family: var(--font-display); font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 0.5rem; }
+.form-success p { font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+.faq-section { background: var(--light); padding: 5rem 3rem; }
+.faq-title { font-family: var(--font-display); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; text-transform: uppercase; margin-bottom: 2.5rem; }
+.faq-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+.faq-item { padding: 2rem; background: var(--white); }
+.faq-q { font-family: var(--font-display); font-size: 1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.7rem; }
+.faq-a { font-size: 0.82rem; color: var(--gray); line-height: 1.7; }
+footer { background: var(--black); color: var(--white); padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { font-size: 0.72rem; color: rgba(255,255,255,0.4); text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; }
+.footer-links a:hover { color: var(--accent); }
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+@media (max-width: 900px) {
+  nav { padding: 0 1.2rem; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .page-hero { padding: 2rem 1.2rem; }
+  .contact-layout { grid-template-columns: 1fr; }
+  .contact-info { padding: 2.5rem 1.2rem; border-right: none; border-bottom: 1px solid var(--border); }
+  .contact-form-wrap { padding: 2.5rem 1.2rem; }
+  .form-row { grid-template-columns: 1fr; }
+  .faq-section { padding: 3rem 1.2rem; }
+  .faq-grid { grid-template-columns: 1fr; }
+  footer { padding: 1.5rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+<div class="progress-bar"></div>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html" onclick="closeMobileMenu()">Home</a>
+  <a href="products.html" onclick="closeMobileMenu()">Shop</a>
+  <a href="contact.html" onclick="closeMobileMenu()">Contact</a>
+  <a href="cart.html" class="m-cart" id="mobile-cart-link">Cart (0)</a>
+</div>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="aigenmax_art-logo-1__10_.png" alt="NURANIQ" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="nav-logo-text" style="display:none">NURANIQ</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="products.html">Shop</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="cart.html" class="cart-btn" id="nav-cart">Cart (0)</a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="page-hero">
+  <p class="page-tag">Get in touch</p>
+  <h1 class="page-title">Contact Us</h1>
+</div>
+<div class="contact-layout">
+  <div class="contact-info reveal">
+    <p class="info-desc">Questions about your order or our products? We reply fastest on WhatsApp. Based in Chittagong, delivering all over Bangladesh.</p>
+    <div class="contact-cards">
+      <div class="contact-card"><div class="contact-card-icon">📱</div><div><p class="contact-card-label">WhatsApp</p><p class="contact-card-value">+880 1XXX-XXXXXX</p><p class="contact-card-sub">Fastest — reply within 2 hours</p></div></div>
+      <div class="contact-card"><div class="contact-card-icon">📧</div><div><p class="contact-card-label">Email</p><p class="contact-card-value"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e3968f978a8e82978690978c91868187d1d7d4a3848e828a8fcd808c8e">[email&#160;protected]</a></p><p class="contact-card-sub">For detailed enquiries</p></div></div>
+      <div class="contact-card"><div class="contact-card-icon">📍</div><div><p class="contact-card-label">Location</p><p class="contact-card-value">Chittagong, Bangladesh</p><p class="contact-card-sub">Nationwide delivery in 3–5 days</p></div></div>
+      <div class="contact-card"><div class="contact-card-icon">⏰</div><div><p class="contact-card-label">Hours</p><p class="contact-card-value">Sat – Thu, 10AM – 9PM</p><p class="contact-card-sub">Friday limited hours</p></div></div>
+    </div>
+    <div class="social-links">
+      <a href="#" class="social-link">Instagram</a>
+      <a href="#" class="social-link">Facebook</a>
+      <a href="#" class="social-link">TikTok</a>
+      <a href="#" class="social-link">WhatsApp</a>
+    </div>
+  </div>
+  <div class="contact-form-wrap reveal">
+    <p class="form-title">Send a Message</p>
+    <div id="contact-form">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Your Name</label><input type="text" class="form-input" id="f-name" placeholder="Full name"></div>
+        <div class="form-group"><label class="form-label">Phone</label><input type="tel" class="form-input" id="f-phone" placeholder="01XXXXXXXXX"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Topic</label>
+        <select class="form-input" id="f-topic">
+          <option value="">Select a topic</option>
+          <option>Order enquiry</option>
+          <option>Product question</option>
+          <option>Return / Exchange</option>
+          <option>Delivery issue</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Message</label><textarea class="form-input" id="f-message" placeholder="How can we help?"></textarea></div>
+      <button class="submit-btn" onclick="submitForm()">Send Message</button>
+    </div>
+    <div class="form-success" id="form-success">
+      <h3>Message Sent! ✓</h3>
+      <p>We'll get back to you on WhatsApp or email shortly.</p>
+    </div>
+  </div>
+</div>
+<section class="faq-section reveal">
+  <h2 class="faq-title">Frequently Asked</h2>
+  <div class="faq-grid">
+    <div class="faq-item"><p class="faq-q">How long does delivery take?</p><p class="faq-a">3–5 business days nationwide. Chittagong orders may arrive faster.</p></div>
+    <div class="faq-item"><p class="faq-q">How do I pay?</p><p class="faq-a">Cash on Delivery only. Pay when your parcel arrives at your door.</p></div>
+    <div class="faq-item"><p class="faq-q">Can I return or exchange?</p><p class="faq-a">Yes — within 3 days of delivery if unused. Contact us on WhatsApp.</p></div>
+    <div class="faq-item"><p class="faq-q">How do I track my order?</p><p class="faq-a">We send WhatsApp updates once your order is dispatched.</p></div>
+    <div class="faq-item"><p class="faq-q">Do you have a size guide?</p><p class="faq-a">Message us on WhatsApp and we'll help you pick the right size.</p></div>
+    <div class="faq-item"><p class="faq-q">Do you ship outside Bangladesh?</p><p class="faq-a">Bangladesh only for now. International shipping coming soon.</p></div>
+  </div>
+</section>
+<footer>
+  <p class="footer-copy">© 2026 NURANIQ. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="products.html">Shop</a>
+    <a href="cart.html">Cart</a>
+  </div>
+</footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('open'); document.getElementById('hamburger').classList.toggle('open'); }
+function closeMobileMenu() { document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('hamburger').classList.remove('open'); }
+const cart = JSON.parse(localStorage.getItem('nuraniq_cart') || '[]');
+document.getElementById('nav-cart').textContent = `Cart (${cart.length})`;
+const m = document.getElementById('mobile-cart-link'); if(m) m.textContent = `Cart (${cart.length})`;
+function submitForm() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const msg = document.getElementById('f-message').value.trim();
+  if (!name||!phone||!msg) { alert('Please fill in name, phone, and message.'); return; }
+  document.getElementById('contact-form').style.display = 'none';
+  document.getElementById('form-success').style.display = 'block';
+}
+const observer = new IntersectionObserver(entrie

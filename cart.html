@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cart — NURANIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --black: #0d0d0d; --white: #f8f8f6; --gray: #888; --light: #f0f0ee; --border: #e0e0de; --accent: #e8533a; --font-display: 'Barlow Condensed', sans-serif; --font-body: 'DM Sans', sans-serif; }
+html { scroll-behavior: smooth; }
+.progress-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); z-index: 9999; width: 100%; animation: loadBar 0.5s ease forwards; }
+@keyframes loadBar { from { width: 0%; } to { width: 100%; } }
+body { background: var(--white); color: var(--black); font-family: var(--font-body); overflow-x: hidden; }
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 3rem; height: 64px; background: var(--white); border-bottom: 1px solid var(--border); }
+.nav-logo img { height: 32px; object-fit: contain; }
+.nav-logo-text { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; letter-spacing: 0.1em; color: var(--black); text-decoration: none; }
+.nav-links { display: flex; gap: 2rem; list-style: none; }
+.nav-links a { color: var(--black); text-decoration: none; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; transition: color 0.2s; }
+.nav-links a:hover { color: var(--accent); }
+.nav-right { display: flex; gap: 1rem; align-items: center; }
+.cart-btn { background: var(--accent); color: var(--white); padding: 0.5rem 1.2rem; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; }
+.hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+.hamburger span { display: block; width: 22px; height: 2px; background: var(--black); transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.mobile-menu { display: none; position: fixed; inset: 0; background: var(--white); z-index: 99; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { color: var(--black); text-decoration: none; font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; text-transform: uppercase; }
+.mobile-menu .m-cart { background: var(--black); color: var(--white) !important; padding: 0.8rem 3rem; }
+.page-hero { margin-top: 64px; padding: 3rem; background: var(--black); color: var(--white); }
+.page-tag { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+.page-title { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 900; text-transform: uppercase; line-height: 0.9; }
+.cart-layout { display: grid; grid-template-columns: 1fr 380px; gap: 3rem; padding: 3rem; max-width: 1200px; margin: 0 auto; }
+.cart-empty { text-align: center; padding: 6rem 0; }
+.cart-empty h3 { font-family: var(--font-display); font-size: 2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 1rem; color: var(--gray); }
+.cart-empty a { color: var(--accent); text-decoration: none; font-family: var(--font-display); font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; border-bottom: 2px solid var(--accent); }
+.cart-item { display: grid; grid-template-columns: 90px 1fr auto; gap: 1.2rem; align-items: center; padding: 1.2rem 0; border-bottom: 1px solid var(--border); }
+.cart-item-img { width: 90px; height: 90px; background: var(--light); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 0.5rem; letter-spacing: 0.2em; color: var(--gray); position: relative; overflow: hidden; }
+.cart-item-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.cart-item-cat { font-size: 0.62rem; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.2rem; }
+.cart-item-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.2rem; }
+.cart-item-code { font-size: 0.62rem; color: var(--gray); font-family: monospace; margin-bottom: 0.7rem; }
+.qty-control { display: flex; align-items: center; gap: 0.8rem; }
+.qty-btn { background: var(--light); border: 1px solid var(--border); color: var(--black); width: 30px; height: 30px; font-size: 1rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.qty-btn:hover { background: var(--black); color: var(--white); border-color: var(--black); }
+.qty-num { font-family: var(--font-display); font-size: 1rem; font-weight: 700; min-width: 20px; text-align: center; }
+.cart-item-price { font-family: var(--font-display); font-size: 1.2rem; font-weight: 900; text-align: right; }
+.remove-btn { display: block; font-size: 0.62rem; color: var(--gray); letter-spacing: 0.1em; text-transform: uppercase; background: none; border: none; cursor: pointer; margin-top: 0.4rem; transition: color 0.2s; text-align: right; }
+.remove-btn:hover { color: var(--accent); }
+.order-summary { position: sticky; top: 80px; height: fit-content; }
+.summary-box { background: var(--light); padding: 1.8rem; margin-bottom: 1rem; border: 1px solid var(--border); }
+.summary-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 1.5rem; }
+.summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+.summary-row span { font-size: 0.82rem; color: var(--gray); }
+.summary-row strong { font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; }
+.summary-divider { border: none; border-top: 1px solid var(--border); margin: 0.8rem 0; }
+.summary-total span { font-size: 0.9rem; font-weight: 500; }
+.summary-total strong { font-family: var(--font-display); font-size: 1.5rem; font-weight: 900; color: var(--accent); }
+.cod-badge { background: var(--black); color: var(--white); padding: 1rem 1.2rem; display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.cod-badge span:first-child { font-size: 1.4rem; }
+.cod-text strong { display: block; font-family: var(--font-display); font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.cod-text p { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+.checkout-form { background: var(--light); padding: 1.8rem; border: 1px solid var(--border); }
+.form-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 900; text-transform: uppercase; margin-bottom: 1.5rem; }
+.form-group { margin-bottom: 1rem; }
+.form-label { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gray); margin-bottom: 0.4rem; display: block; font-weight: 500; }
+.form-input { width: 100%; background: var(--white); border: 1px solid var(--border); color: var(--black); padding: 0.75rem 1rem; font-family: var(--font-body); font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+.form-input:focus { border-color: var(--black); }
+.form-input::placeholder { color: #ccc; }
+textarea.form-input { resize: vertical; min-height: 80px; }
+.place-order-btn { width: 100%; background: var(--black); color: var(--white); border: none; padding: 1rem; font-family: var(--font-display); font-size: 1rem; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; margin-top: 1rem; }
+.place-order-btn:hover { background: var(--accent); }
+.place-order-btn:disabled { background: var(--gray); cursor: not-allowed; }
+.order-success { display: none; background: var(--black); color: var(--white); padding: 2.5rem; text-align: center; }
+.order-success h3 { font-family: var(--font-display); font-size: 2.5rem; font-weight: 900; text-transform: uppercase; margin-bottom: 1rem; }
+.order-success p { font-size: 0.88rem; color: rgba(255,255,255,0.6); line-height: 1.7; margin-bottom: 0.5rem; }
+.order-id-display { font-family: monospace; font-size: 1.2rem; color: var(--accent); margin: 1rem 0; letter-spacing: 0.1em; }
+.wa-btn { display: inline-block; margin-top: 1rem; background: #25D366; color: white; padding: 0.8rem 2rem; font-family: var(--font-display); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; }
+footer { background: var(--black); color: var(--white); padding: 2rem 3rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+.footer-copy { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+.footer-links { display: flex; gap: 1.5rem; }
+.footer-links a { font-size: 0.72rem; color: rgba(255,255,255,0.4); text-decoration: none; text-transform: uppercase; letter-spacing: 0.1em; transition: color 0.2s; }
+.footer-links a:hover { color: var(--accent); }
+@media (max-width: 900px) {
+  nav { padding: 0 1.2rem; }
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .page-hero { padding: 2rem 1.2rem; }
+  .cart-layout { grid-template-columns: 1fr; padding: 1.2rem; gap: 2rem; }
+  .order-summary { position: static; }
+  footer { padding: 1.5rem 1.2rem; }
+}
+</style>
+</head>
+<body>
+<div class="progress-bar"></div>
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html" onclick="closeMobileMenu()">Home</a>
+  <a href="products.html" onclick="closeMobileMenu()">Shop</a>
+  <a href="contact.html" onclick="closeMobileMenu()">Contact</a>
+  <a href="cart.html" class="m-cart" id="mobile-cart-link">Cart (0)</a>
+</div>
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="aigenmax_art-logo-1__10_.png" alt="NURANIQ" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <span class="nav-logo-text" style="display:none">NURANIQ</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="products.html">Shop</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="cart.html" class="cart-btn" id="nav-cart">Cart (0)</a>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="page-hero">
+  <p class="page-tag">Almost there</p>
+  <h1 class="page-title">Your Cart</h1>
+</div>
+<div class="cart-layout">
+  <div id="cart-items-container"></div>
+  <div class="order-summary">
+    <div class="summary-box">
+      <p class="summary-title">Order Summary</p>
+      <div class="summary-row"><span>Subtotal</span><strong id="subtotal">৳ 0</strong></div>
+      <div class="summary-row"><span>Delivery</span><strong>৳ 80</strong></div>
+      <hr class="summary-divider">
+      <div class="summary-row summary-total"><span>Total</span><strong id="total">৳ 80</strong></div>
+    </div>
+    <div class="cod-badge">
+      <span>💵</span>
+      <div class="cod-text"><strong>Cash on Delivery</strong><p>Pay when your order arrives.</p></div>
+    </div>
+    <div class="checkout-form" id="checkout-form">
+      <p class="form-title">Delivery Details</p>
+      <div class="form-group"><label class="form-label">Full Name *</label><input type="text" class="form-input" id="cust-name" placeholder="Your full name"></div>
+      <div class="form-group"><label class="form-label">Phone Number *</label><input type="tel" class="form-input" id="cust-phone" placeholder="01XXXXXXXXX"></div>
+      <div class="form-group"><label class="form-label">Delivery Address *</label><textarea class="form-input" id="cust-address" placeholder="House, Road, Area, City"></textarea></div>
+      <div class="form-group"><label class="form-label">Note (optional)</label><input type="text" class="form-input" id="cust-note" placeholder="Special instructions"></div>
+      <button class="place-order-btn" id="place-order-btn" onclick="placeOrder()">Place Order — Cash on Delivery</button>
+    </div>
+    <div class="order-success" id="order-success">
+      <h3>Order Placed! 🎉</h3>
+      <p>Thank you! We will confirm via WhatsApp shortly.</p>
+      <div class="order-id-display" id="order-id-display"></div>
+      <p>Expected delivery: <strong>3–5 business days</strong></p>
+      <a href="#" class="wa-btn" id="wa-confirm-btn">Confirm on WhatsApp</a>
+    </div>
+  </div>
+</div>
+<footer>
+  <p class="footer-copy">© 2026 NURANIQ. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="index.html">Home</a>
+    <a href="products.html">Shop</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</footer>
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzPRNVIVa4SIU2QqEqqYZmItIj6Pb6l2Ji8NEpjH40e20PIK4t-x0yYS0VdxSLVFAgf/exec';
+const WA_NUMBER = '8801XXXXXXXXX'; // Replace with your number e.g. 8801712345678
+
+function toggleMenu() { document.getElementById('mobile-menu').classList.toggle('open'); document.getElementById('hamburger').classList.toggle('open'); }
+function closeMobileMenu() { document.getElementById('mobile-menu').classList.remove('open'); document.getElementById('hamburger').classList.remove('open'); }
+
+let cart = JSON.parse(localStorage.getItem('nuraniq_cart') || '[]');
+function updateCartNav() { const c = cart.length; document.getElementById('nav-cart').textContent = `Cart (${c})`; const m = document.getElementById('mobile-cart-link'); if(m) m.textContent = `Cart (${c})`; }
+
+function getCartSummary() { const items = {}; cart.forEach(i => { if(items[i.id]) items[i.id].qty++; else items[i.id] = {...i, qty:1}; }); return Object.values(items); }
+
+function renderCart() {
+  const container = document.getElementById('cart-items-container');
+  const items = getCartSummary();
+  updateCartNav();
+  if (items.length === 0) { container.innerHTML = `<div class="cart-empty"><h3>Cart is empty</h3><a href="products.html">Browse Products</a></div>`; document.getElementById('place-order-btn').disabled = true; return; }
+  container.innerHTML = items.map(i => `
+    <div class="cart-item">
+      <div class="cart-item-img">NURANIQ</div>
+      <div>
+        <p class="cart-item-cat">${i.category}</p>
+        <p class="cart-item-name">${i.name}</p>
+        <p class="cart-item-code">#${i.id}</p>
+        <div class="qty-control">
+          <button class="qty-btn" onclick="changeQty('${i.id}',-1)">−</button>
+          <span class="qty-num">${i.qty}</span>
+          <button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button>
+        </div>
+      </div>
+      <div>
+        <p class="cart-item-price">৳ ${(i.price*i.qty).toLocaleString()}</p>
+        <button class="remove-btn" onclick="removeItem('${i.id}')">Remove</button>
+      </div>
+    </div>`).join('');
+  const sub = items.reduce((s,i) => s+i.price*i.qty, 0);
+  document.getElementById('subtotal').textContent = `৳ ${sub.toLocaleString()}`;
+  document.getElementById('total').textContent = `৳ ${(sub+80).toLocaleString()}`;
+}
+
+function changeQty(id, d) {
+  if (d===1) { const i = cart.find(x=>x.id===id); if(i) cart.push({...i}); }
+  else { const idx = cart.map(x=>x.id).lastIndexOf(id); if(idx!==-1) cart.splice(idx,1); }
+  localStorage.setItem('nuraniq_cart', JSON.stringify(cart)); renderCart();
+}
+function removeItem(id) { cart = cart.filter(i=>i.id!==id); localStorage.setItem('nuraniq_cart', JSON.stringify(cart)); renderCart(); }
+
+async function placeOrder() {
+  const name = document.getElementById('cust-name').value.trim();
+  const phone = document.getElementById('cust-phone').value.trim();
+  const address = document.getElementById('cust-address').value.trim();
+  const note = document.getElementById('cust-note').value.trim();
+  if (!name||!phone||!address) { alert('Please fill in name, phone, and address.'); return; }
+  const btn = document.getElementById('place-order-btn');
+  btn.disabled = true; btn.textContent = 'Placing Order...';
+  const items = getCartSummary();
+  const sub = items.reduce((s,i)=>s+i.price*i.qty,0);
+  const total = sub + 80;
+  const orderId = 'NRQ' + Date.now().toString().slice(-6);
+  const itemsStr = items.map(i=>`${i.name} x${i.qty}`).join(', ');
+  const orderData = { order_id:orderId, date:new Date().toLocaleDateString('en-BD'), customer_name:name, phone, address, items:itemsStr, total, status:'Pending', note:note||'' };
+  try { await fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(orderData) }); } catch(e) {}
+  cart = []; localStorage.setItem('nuraniq_cart', JSON.stringify(cart));
+  document.getElementById('checkout-form').style.display = 'none';
+  document.getElementById('order-success').style.display = 'block';
+  document.getElementById('order-id-display').textContent = `Order ID: ${orderId}`;
+  updateCartNav();
+  const msg = `Hi NURANIQ! New order.\n\nOrder ID: ${orderId}\nName: ${name}\nPhone: ${phone}\nItems: ${itemsStr}\nTotal: ৳${total}\nAddress: ${address}\nNote: ${note||'None'}`;
+  document.getElementById('wa-confirm-btn').href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+}
+
+renderCart();
+</script>
+<a href="https://wa.me/8801XXXXXXXXX" target="_blank" style="position:fixed;bottom:2rem;right:2rem;width:56px;height:56px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:130;box-shadow:0 4px 20px rgba(37,211,102,0.4);text-decoration:none;" title="Chat on WhatsApp"><svg viewBox="0 0 24 24" style="width:28px;height:28px;fill:white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+</body>
+</html>
